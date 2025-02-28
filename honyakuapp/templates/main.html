@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+
+{% block title %}英語翻訳ツール{% endblock %}
+
+{% block header %}
+    英語翻訳ツール
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <textarea id="inputText" class="text-box" placeholder="翻訳したいテキストを入力してください"></textarea>
+    <textarea id="outputText" class="text-box" placeholder="翻訳結果が表示されます"></textarea>
+</div>
+<button id="translateButton">翻訳</button>
+    <div id="outputText" class="w-80 h-40 p-2 border border-gray-300 rounded bg-white"></div>
+
+    <script>
+        async function translateTextWithLingva(text) {
+            const url = `https://lingva.ml/api/v1/ja/en/${encodeURIComponent(text)}`;
+
+            try {
+                const response = await fetch(url);
+                const data = await response.json();
+
+                if (data && data.translation) {
+                    return data.translation;
+                } else {
+                    throw new Error('翻訳に失敗しました。');
+                }
+            } catch (error) {
+                throw new Error('APIエラー: ' + error.message);
+            }
+        }
+
+        document.getElementById('translateButton').addEventListener('click', async () => {
+            const inputText = document.getElementById('inputText').value;
+            const outputDiv = document.getElementById('outputText');
+
+            if (!inputText.trim()) {
+                outputDiv.textContent = 'テキストを入力してください。';
+                return;
+            }
+
+            outputDiv.textContent = '翻訳中...';
+            try {
+                const translatedText = await translateTextWithLingva(inputText);
+                outputDiv.textContent = translatedText;
+            } catch (error) {
+                outputDiv.textContent = 'エラーが発生しました: ' + error.message;
+            }
+        });
+    </script>
+{% endblock %}

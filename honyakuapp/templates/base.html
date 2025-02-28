@@ -1,0 +1,31 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="utf-8">
+    <link href="{% static 'css/style.css' %}" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}英語翻訳ツール{% endblock %}</title>
+</head>
+<body class="flex flex-col items-center justify-center min-h-screen bg-gray-100">
+    <header class="header">
+        <h1>英語翻訳ツール</h1>
+    </header>
+    
+    {% block content %}
+    <!-- 子テンプレートでコンテンツを挿入 -->
+    {% endblock %}
+
+    <footer class="footer">
+        <div class="md-flex md-justify-between">
+            <ul class="footer__navi flex">
+                <li><a href="{% url 'main' %}">翻訳ページ</a></li>
+                <li><a href="{% url 'form' %}">お問い合わせ</a></li>
+            </ul>
+        </div>
+        <hr>
+        <p class="copyright">©2024</p>
+    </footer>
+</body>
+</html>
