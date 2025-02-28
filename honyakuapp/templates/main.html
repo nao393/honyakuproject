@@ -9,15 +9,18 @@
 {% block content %}
 <div class="container">
     <textarea id="inputText" class="text-box" placeholder="翻訳したいテキストを入力してください"></textarea>
+    <select id="languageSelect" class="mt-2 px-4 py-2 border border-gray-300 rounded">
+        <option value="ja-en">日本語 → 英語</option>
+        <option value="en-ja">英語 → 日本語</option>
+    </select>
     <textarea id="outputText" class="text-box" placeholder="翻訳結果が表示されます"></textarea>
 </div>
 <button id="translateButton">翻訳</button>
     <div id="outputText" class="w-80 h-40 p-2 border border-gray-300 rounded bg-white"></div>
 
     <script>
-        async function translateTextWithLingva(text) {
-            const url = `https://lingva.ml/api/v1/ja/en/${encodeURIComponent(text)}`;
-
+        async function translateTextWithLingva(text, sourceLang, targetLang) {
+            const url = `https://lingva.ml/api/v1/${sourceLang}/${targetLang}/${encodeURIComponent(text)}`;
             try {
                 const response = await fetch(url);
                 const data = await response.json();
@@ -35,7 +38,16 @@
         document.getElementById('translateButton').addEventListener('click', async () => {
             const inputText = document.getElementById('inputText').value;
             const outputDiv = document.getElementById('outputText');
-
+            const languageSelect = document.getElementById('languageSelect').value;
+            
+            let sourceLang, targetLang;
+            if (languageSelect === "ja-en") {
+                sourceLang = "ja";
+                targetLang = "en";
+            } else {
+                sourceLang = "en";
+                targetLang = "ja";
+            }
             if (!inputText.trim()) {
                 outputDiv.textContent = 'テキストを入力してください。';
                 return;
@@ -43,7 +55,7 @@
 
             outputDiv.textContent = '翻訳中...';
             try {
-                const translatedText = await translateTextWithLingva(inputText);
+                const translatedText = await translateTextWithLingva(inputText, sourceLang, targetLang);
                 outputDiv.textContent = translatedText;
             } catch (error) {
                 outputDiv.textContent = 'エラーが発生しました: ' + error.message;
